@@ -45,6 +45,16 @@
 
 
 # ==============================================================================
+# Command line parameters
+# ==============================================================================
+
+[CmdletBinding()]
+param (
+   [Switch]$Force
+)
+
+
+# ==============================================================================
 # Ensure script is running with Administrative Privileges
 # ==============================================================================
 
@@ -56,7 +66,7 @@ if (
    -not $principal.IsInRole(
       [Security.Principal.WindowsBuiltInRole]::Administrator
    )
-){
+) {
    Write-Host -ForegroundColor Red `
       "[X] ERROR: This script must be executed as Administrator!" `
    Exit 1
@@ -236,17 +246,24 @@ foreach ($ProfilePath in $Profiles) {
        $CurrentProfile = ""
    }
 
-   # Remove old custom prompt block if it exists (using Regex)
-   $Pattern = "(?s)\r?\n?$([regex]::Escape($MarkerStart)).*?" +
-              "$([regex]::Escape($MarkerEnd))\r?\n?"
+   if ($Force) {
+      # Overrides the old profile
+      $NewContent = "$MarkerStart`n$PromptCode`n$MarkerEnd`n"
+      Write-Host -ForegroundColor Yellow `
+         "[!] Force switch used. Recreating profile from scratch..."
+   } else {
+      # Remove old custom prompt block if it exists (using Regex)
+      $Pattern = "(?s)\r?\n?$([regex]::Escape($MarkerStart)).*?" +
+                 "$([regex]::Escape($MarkerEnd))\r?\n?"
 
-   $CurrentProfile = $CurrentProfile -replace $Pattern, ""
+      $CurrentProfile = $CurrentProfile -replace $Pattern, ""
 
-   # Append the new prompt block safely to the end
-   $NewContent = $CurrentProfile.TrimEnd() +
-                 "`n`n$MarkerStart`n$PromptCode`n$MarkerEnd`n"
+      # Append the new prompt block safely to the end
+      $NewContent = $CurrentProfile.TrimEnd() +
+                    "`n`n$MarkerStart`n$PromptCode`n$MarkerEnd`n"
+   }
 
-   # Write back the preserved configurations + new prompt
+   # Write back the new configuration
    Set-Content -Path $ProfilePath -Value $NewContent -Force
 
    Write-Host -ForegroundColor Green "[+] Prompt updated: $ProfilePath"
@@ -368,3 +385,4 @@ Write-Host "`n======================================" -ForegroundColor Cyan
 Write-Host " Terminal customization completed!" -ForegroundColor Cyan
 Write-Host " Restart terminal to apply changes." -ForegroundColor Yellow
 Write-Host "======================================" -ForegroundColor Cyan
+
