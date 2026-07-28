@@ -68,7 +68,7 @@ if (
    )
 ) {
    Write-Host -ForegroundColor Red `
-      "[X] ERROR: This script must be executed as Administrator!" `
+      "[X] ERROR: This script must be executed as Administrator!"
    Exit 1
 }
 
@@ -82,7 +82,7 @@ $WindowsBuild = [System.Environment]::OSVersion.Version.Build
 # Winget requires Windows 10 build 17763 or later
 if ($WindowsBuild -lt 17763) {
    Write-Host -ForegroundColor Red `
-      "[X] Windows version is too old for winget." 
+      "[X] Windows version is too old for winget."
    Exit 1
 }
 
@@ -95,7 +95,7 @@ $Winget = Get-Command winget -ErrorAction SilentlyContinue
 
 if (-not $Winget) {
    Write-Host -ForegroundColor Yellow `
-      "[!] winget not found. Trying to register App Installer..." `
+      "[!] winget not found. Trying to register App Installer..."
 
    # Attempt to manually register the App Installer package
    try {
