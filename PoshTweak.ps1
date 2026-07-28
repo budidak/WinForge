@@ -37,10 +37,14 @@
    Version        : 1.0.0
    Author         : Burak Yeşilyurt
    Date Created   : 27/07/2026
-   Date Updated   : 27/07/2026
+   Date Updated   : 28/07/2026
    Prerequisites  : PowerShell 5.1+, winget, Administrator Rights (for Registry
                     and Default User edits)
    License        : MIT License
+   Tested Environment:
+      - Hardware: ASUS TUF A15 FA507XI LP013
+      - OS: Windows 11 Pro 25H2 (OS Build 26200.8894)
+      - Shell: PowerShell 5.1 & PowerShell 7.x
 #>
 
 
@@ -186,7 +190,8 @@ $global:isAdmin = $principal.IsInRole(
    [Security.Principal.WindowsBuiltInRole]::Administrator
 )
 
-function prompt {
+function prompt
+{
    if ($global:isAdmin) {
       $symbol = "#"
       $userColor = "Red"
@@ -347,8 +352,8 @@ foreach ($User in $LoadedUsers) {
          "[+] Console theme applied: $($User.PSChildName)"
    } catch {
       Write-Host -ForegroundColor Yellow `
-         $"[!] Skipped profile (might be locked or incomplete): `
-         ($User.PSChildName)" `
+         ("[!] Skipped profile (might be locked or incomplete): " +
+         $User.PSChildName)
    }
 }
 
